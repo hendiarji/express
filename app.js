@@ -7,6 +7,7 @@ const log = require("./middlewares/logger");
 
 app.use(log);
 app.use(express.urlencoded({ extends: true }));
+app.use(express.json());
 app.use(router);
 app.use((req, res, next) => {
   res.status(404);
