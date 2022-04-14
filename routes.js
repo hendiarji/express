@@ -2,7 +2,8 @@ const router = require("express").Router();
 const multer = require("multer");
 const upload = multer({ dest: "uploads" });
 const fs = require("fs");
-const { path } = require("express/lib/application");
+const path = require("path");
+// const { path } = require("express/lib/application");
 
 router.get("/", (req, res) => {
   const { page, total } = req.query;
