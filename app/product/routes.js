@@ -3,16 +3,30 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads" });
 const fs = require("fs");
 const path = require("path");
+const connection = require("../../config/mysql");
+const { response } = require("express");
 // const { path } = require("express/lib/application");
 
-router.get("/", (req, res) => {
-  const { page, total } = req.query;
-  res.send({
-    status: "Succesfully",
-    message: "Welcome to Express JS Tutorial",
-    page,
-    total,
-  });
+router.get("/product", (req, res) => {
+  connection.connect();
+  connection.query(
+    {
+      sql: "select * FROM products",
+    },
+    (error, result) => {
+      if (error) {
+        res.send({
+          status: "failed",
+          response: "failed to fetch data",
+        });
+      } else {
+        res.send({
+          status: "success",
+          response: result,
+        });
+      }
+    }
+  );
 });
 
 router.get("/product/:id", (req, res) => {
@@ -23,16 +37,15 @@ router.get("/product/:id", (req, res) => {
 
 router.post("/product/", upload.single("image"), (req, res) => {
   const { name, price, stock, status } = req.body;
-  const { image } = req.file;
   if (image) {
-    const target = path.join(__dirname, "uploads", image.originalname);
-    fs.renameSync(image.path, target);
+    const target = path.join(__dirname, "uploads", req.file.originalname);
+    fs.renameSync(req.path, target);
     res.json({
       name,
       price,
       stock,
       status,
-      image,
+      image: req.file.originalname,
     });
   }
 });
